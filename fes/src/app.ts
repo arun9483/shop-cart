@@ -14,27 +14,34 @@ export interface FesConfig {
   /** The built Cart client. */
   clientDist: string;
   version: VersionInfo;
+  /** How long a backend call may take: a slower API call is a 504, a slower readiness check fails. */
+  backendTimeoutMs: number;
 }
 
 const NO_CACHE = 'no-cache';
 const IMMUTABLE = 'public, max-age=31536000, immutable';
 
-async function backendReady(backendUrl: string): Promise<boolean> {
-  const res = await fetch(`${backendUrl}/health/ready`, { signal: AbortSignal.timeout(2000) });
+async function backendReady(backendUrl: string, timeoutMs: number): Promise<boolean> {
+  const res = await fetch(`${backendUrl}/health/ready`, { signal: AbortSignal.timeout(timeoutMs) });
   return res.ok;
 }
 
-export function createApp({ backendUrl, clientDist, version }: FesConfig): Express {
+export function createApp({
+  backendUrl,
+  clientDist,
+  version,
+  backendTimeoutMs,
+}: FesConfig): Express {
   const app = express();
   app.disable('x-powered-by');
-  app.use(healthRouter({ version, ready: () => backendReady(backendUrl) }));
+  app.use(healthRouter({ version, ready: () => backendReady(backendUrl, backendTimeoutMs) }));
 
   const api = express.Router();
   api.use(traceResponse);
-  api.get('/', (_req, res) => forward(res, `${backendUrl}/cart`));
+  api.get('/', (_req, res) => forward(res, `${backendUrl}/cart`, backendTimeoutMs));
   api.get('/test-error', async (req, res) => {
     if (req.query.in === 'backend') {
-      await forward(res, `${backendUrl}/test-error`);
+      await forward(res, `${backendUrl}/test-error`, backendTimeoutMs);
       return;
     }
     throw new Error('Cart FES test error');

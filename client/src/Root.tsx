@@ -1,10 +1,11 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { match, usePathname } from './routing';
+import { lazyWithTimeout } from './timeouts';
 
 // Each feature is its own chunk, loaded on first use. The entry imports no feature code and no
 // design-system components, so it stays lean.
-const CartPage = lazy(() => import('./features/CartPage'));
-const TestError = lazy(() => import('./features/TestError'));
+const CartPage = lazyWithTimeout(() => import('./features/CartPage'));
+const TestError = lazyWithTimeout(() => import('./features/TestError'));
 
 function Page() {
   const route = match(usePathname());

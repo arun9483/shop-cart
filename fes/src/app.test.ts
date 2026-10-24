@@ -38,7 +38,7 @@ afterAll(() => {
   backend.close();
 });
 
-const app = () => createApp({ backendUrl, clientDist, version });
+const app = () => createApp({ backendUrl, clientDist, version, backendTimeoutMs: 1000 });
 
 describe('cart FES API', () => {
   it('forwards the cart from its backend', async () => {
@@ -77,7 +77,12 @@ describe('cart FES health', () => {
   });
 
   it('is not ready when its backend is down', async () => {
-    const down = createApp({ backendUrl: 'http://localhost:1', clientDist, version });
+    const down = createApp({
+      backendUrl: 'http://localhost:1',
+      clientDist,
+      version,
+      backendTimeoutMs: 1000,
+    });
     expect((await request(down).get('/health/ready')).status).toBe(503);
   });
 });
