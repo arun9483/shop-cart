@@ -1,0 +1,40 @@
+// Uploads every source map in dist to New Relic against its file's public URL, then deletes it so
+// no map is ever served. Cart errors are reported by the Shell's browser agent, so the maps go
+// to the Shell's browser app. Without New Relic keys the maps are only deleted.
+import { readdirSync, rmSync } from 'node:fs';
+import { join, relative } from 'node:path';
+import { promisify } from 'node:util';
+import sourcemaps from '@newrelic/publish-sourcemap';
+
+const dist = 'dist';
+const base = `${process.env.PUBLIC_ORIGIN ?? 'http://localhost:3000'}/mfe/cart`;
+const apiKey = process.env.NEW_RELIC_USER_API_KEY;
+const applicationId = process.env.NEW_RELIC_BROWSER_APP_ID;
+const publish = promisify(sourcemaps.publishSourcemap);
+
+const maps = readdirSync(dist, { recursive: true, encoding: 'utf8' })
+  .filter((file) => file.endsWith('.js.map'))
+  .map((file) => join(dist, file));
+
+if (!apiKey || !applicationId) {
+  console.log(`sourcemaps: no New Relic keys, deleting ${maps.length} maps without upload`);
+}
+
+for (const map of maps) {
+  if (apiKey && applicationId) {
+    const javascriptUrl = `${base}/${relative(dist, map).slice(0, -'.map'.length)}`;
+    try {
+      await publish({ sourcemapPath: map, javascriptUrl, applicationId, apiKey });
+      console.log(`sourcemaps: uploaded ${javascriptUrl}`);
+    } catch (error) {
+      if (error.message === 'Conflict') {
+        // Hashed names change with content, so this exact file's map is already in New Relic.
+        console.log(`sourcemaps: already uploaded ${javascriptUrl}`);
+      } else {
+        // A failed upload must not ship the map, so it is still deleted.
+        console.warn(`sourcemaps: upload failed for ${javascriptUrl}: ${error.message}`);
+      }
+    }
+  }
+  rmSync(map);
+}
