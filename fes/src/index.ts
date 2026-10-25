@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { readVersion } from '@shop-cart/server-common';
+import { backendAuth, readVersion } from '@shop-cart/server-common';
 import { createApp } from './app.js';
 
 const port = Number(process.env.PORT ?? 3003);
@@ -12,6 +12,8 @@ createApp({
   clientDist,
   version: readVersion(import.meta.dirname),
   backendTimeoutMs,
+  // BACKEND_AUTH=google on Cloud Run, where the backend is private.
+  backendHeaders: backendAuth(process.env.BACKEND_AUTH, backendUrl),
 }).listen(port, () => {
   console.log(`cart FES on http://localhost:${port}`);
 });

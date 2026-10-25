@@ -69,6 +69,19 @@ One process: the stub runs `client/`'s own Vite with its `vite.config.ts`, so HM
 Refresh work on the stub's port. The API still goes to the FES. If port 3103 is taken, pass
 `--port <n>`, set `SHELL_STUB_PORT`, or use `--port 0` for any free port.
 
+## Deploy
+
+`.github/workflows/deploy-staging.yml` deploys Cart to staging on Cloud Run: on every push to `main`
+after lint, typecheck and tests pass, or by hand from any branch (**Actions → Deploy to staging → Run
+workflow**). It builds the client for staging (uploading its source maps), builds one image for the mock
+backend and one for the FES (`deploy/Dockerfile`), deploys the backend as a private service that only
+this FES may call, then the FES, and checks the FES is ready. The Shell's Worker is the public entry.
+
+The workflow reads every identifier from GitHub: repository variables `GCP_PROJECT_ID`, `GCP_REGION`,
+`GCP_WIF_PROVIDER`, `GCP_DEPLOYER`; `staging` environment variables `PUBLIC_ORIGIN`,
+`NEW_RELIC_BROWSER_APP_ID`; and the secret `NEW_RELIC_USER_API_KEY`. No Google key is stored: GitHub
+Actions signs in with workload identity federation.
+
 ## Check
 
 ```sh
