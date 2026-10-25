@@ -43,6 +43,21 @@ Then run the Shell and open http://localhost:3000/cart. The Shell's router sends
 Cart errors are reported by the Shell's browser agent, so `NEW_RELIC_BROWSER_APP_ID` in `client/.env`
 is the Shell's browser application ID; the source maps are uploaded there.
 
+## Standalone
+
+Run Cart without the Shell, on the Shell stub
+[`@arun-shop/shell-stub`](https://www.npmjs.com/package/@arun-shop/shell-stub):
+
+```sh
+pnpm start          # FES and mock backend
+pnpm standalone     # the stub on :3103
+```
+
+Then open http://localhost:3103/cart. The stub loads what the Shell loads (design-system CSS, the Inter
+font, the Shell's base styles and single-spa) and proxies `/mfe/cart` and `/api/cart` to this FES on
+`3003`. The code is the same in both modes; only the page around it differs. Add
+`--env-file <file>` with the Shell's New Relic browser keys to report errors (see the stub's README).
+
 ## Check
 
 ```sh

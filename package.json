@@ -10,13 +10,15 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "pnpm -r run typecheck",
-    "test": "pnpm -r run test"
+    "test": "pnpm -r run test",
+    "standalone": "shell-stub --name cart --mfe-url http://localhost:3003 --port 3103"
   },
   "engines": {
     "node": ">=24.22.1",
     "pnpm": ">=11.28.5"
   },
   "devDependencies": {
+    "@arun-shop/shell-stub": "0.1.2",
     "@eslint/js": "10.0.1",
     "@types/node": "24.19.2",
     "eslint": "10.13.0",
