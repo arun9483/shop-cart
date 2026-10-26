@@ -46,7 +46,12 @@ export function createApp({
 }: FesConfig): Express {
   const app = express();
   app.disable('x-powered-by');
-  app.use(healthRouter({ version, ready: () => backendReady(backendUrl, backendTimeoutMs, backendHeaders) }));
+  app.use(
+    healthRouter({
+      version,
+      ready: () => backendReady(backendUrl, backendTimeoutMs, backendHeaders),
+    }),
+  );
 
   const api = express.Router();
   api.use(traceResponse);
