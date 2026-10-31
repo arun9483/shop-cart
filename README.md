@@ -37,7 +37,7 @@ pnpm build
 pnpm start          # FES and mock backend
 ```
 
-Then run the Shell and open http://localhost:3000/cart. The Shell's router sends `/mfe/cart/*` and
+Then run the Shell and open http://localhost:3000/cart. `shop-router` sends `/mfe/cart/*` and
 `/api/cart/*` here.
 
 Cart errors are reported by the Shell's browser agent, so `NEW_RELIC_BROWSER_APP_ID` in `client/.env`
