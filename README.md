@@ -10,7 +10,7 @@ The Cart micro frontend of the shop platform: the cart page. The
 | ---------------- | --------------------------------------------------------------------- | ------ |
 | `client/`        | React + single-spa-react MFE, built with Vite, served at `/mfe/cart/` | —      |
 | `fes/`           | Express FES: serves the client, `/api/cart/*`, health and version     | `3003` |
-| `mock-backend/`  | Dev only. Stand-in for the Cart backend service                       | `4003` |
+| `mock-backend/`  | Stand-in for the Cart backend service                                 | `4003` |
 | `server-common/` | Trace context, problem+json, health and version for the servers       | —      |
 
 ## How it loads
