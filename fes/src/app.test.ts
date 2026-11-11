@@ -112,3 +112,45 @@ describe('cart FES backend auth', () => {
     server.close();
   });
 });
+
+describe('login (MVP-2)', () => {
+  // A gate that lets nobody in, as for a user without a Cart role.
+  const forbidden = (_req: express.Request, res: express.Response) => {
+    res.status(403).type('application/problem+json').json({ status: 403 });
+  };
+  const withGate = (gate: express.RequestHandler) =>
+    createApp({ backendUrl, clientDist, version, backendTimeoutMs: 1000, auth: { gate } });
+
+  it('gates entry.js and the API, but not the hashed files', async () => {
+    const gated = withGate(forbidden);
+    expect((await request(gated).get('/mfe/cart/entry.js')).status).toBe(403);
+    expect((await request(gated).head('/mfe/cart/entry.js?retry=1')).status).toBe(403);
+    expect((await request(gated).get('/mfe/cart/assets/entry-abc123.js')).status).toBe(200);
+    expect((await request(gated).get('/api/cart/test-error')).status).toBe(403);
+  });
+
+  it('answers /me from the gate and marks a development bypass', async () => {
+    const me = { sub: 'dev', roles: ['r'] };
+    const app = createApp({
+      backendUrl,
+      clientDist,
+      version,
+      backendTimeoutMs: 1000,
+      auth: {
+        gate: (_req, res, next) => {
+          res.locals.me = me;
+          next();
+        },
+        devBypass: true,
+      },
+    });
+    const res = await request(app).get('/api/cart/me');
+    expect(res.body).toEqual(me);
+    expect(res.headers['cache-control']).toBe('no-store');
+    expect(res.headers['x-auth-dev-bypass']).toBe('true');
+  });
+
+  it('is off without auth: /me does not exist', async () => {
+    expect((await request(app()).get('/api/cart/me')).status).toBe(404);
+  });
+});

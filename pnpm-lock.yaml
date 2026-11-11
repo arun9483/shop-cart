@@ -164,9 +164,15 @@ importers:
       express:
         specifier: 5.3.0
         version: 5.3.0
+      jose:
+        specifier: 6.2.17
+        version: 6.2.17
       newrelic:
         specifier: 14.8.0
         version: 14.8.0
+      openid-client:
+        specifier: 6.8.9
+        version: 6.8.9
       statuses:
         specifier: 2.0.2
         version: 2.0.2
@@ -1649,6 +1655,9 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
+  jose@6.2.17:
+    resolution: {integrity: sha512-wOuK9V1yujQFH5S0ZWmLcDZN7+IKh9bUCC2ZPCf2HDlol3WWHy+PPyNjEI75FXRLMp3vDKQcupP59xhVU95hcg==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -1909,6 +1918,9 @@ packages:
     resolution: {integrity: sha512-Dbl4A/VfiVGLgQv29URL9xshU8XDY1GeLy+fsaZ1AA8JDSfjvr5P5+pzRbWqRSBxk6/DW7MIh8lTM/PaGnP2kg==}
     engines: {node: '>=8'}
 
+  oauth4webapi@3.8.8:
+    resolution: {integrity: sha512-8N28E+a/oxfXWBgOMt+ZP/JUf/XR+IFbvkAEPP3gznXOMv9BpAAwiIj0TFNz3tGTPc0ZQ8zmWBNgN1nAys0gng==}
+
   object-inspect@1.13.4:
     resolution: {integrity: sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew==}
     engines: {node: '>= 0.4'}
@@ -1923,6 +1935,9 @@ packages:
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
+
+  openid-client@6.8.9:
+    resolution: {integrity: sha512-6mXMRNJxDOf6BflEWLXul1UwzLFz++9Ofz1PYwPwwsJsyXBsbfkO+Jo255SW1qnFNLYz4EJWHz42X4OJJrya/g==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -3964,6 +3979,8 @@ snapshots:
 
   isexe@2.0.0: {}
 
+  jose@6.2.17: {}
+
   js-tokens@4.0.0: {}
 
   jsdom@30.1.3(@noble/hashes@1.8.0):
@@ -4218,6 +4235,8 @@ snapshots:
       path-key: 3.1.1
     optional: true
 
+  oauth4webapi@3.8.8: {}
+
   object-inspect@1.13.4: {}
 
   obug@3.0.0: {}
@@ -4229,6 +4248,11 @@ snapshots:
   once@1.4.0:
     dependencies:
       wrappy: 1.0.2
+
+  openid-client@6.8.9:
+    dependencies:
+      jose: 6.2.17
+      oauth4webapi: 3.8.8
 
   optionator@0.9.4:
     dependencies:
