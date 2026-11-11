@@ -1,5 +1,6 @@
-import express, { type Express } from 'express';
+import express, { type Express, type RequestHandler, type Response } from 'express';
 import {
+  devBypassHeader,
   forward,
   noBackendAuth,
   type BackendHeaders,
@@ -7,6 +8,7 @@ import {
   notFound,
   problemHandler,
   traceResponse,
+  userBearer,
   type VersionInfo,
 } from '@shop-cart/server-common';
 
@@ -20,6 +22,11 @@ export interface FesConfig {
   backendTimeoutMs: number;
   /** Auth for backend calls: a Google identity token on Cloud Run, nothing locally. */
   backendHeaders?: BackendHeaders;
+  /**
+   * Login (MVP-2), off unless given: the gate on `/api/cart/*` and `entry.js` (no valid login → 401,
+   * no Cart role → 403). The Shell logs users in; this FES only checks.
+   */
+  auth?: { gate: RequestHandler; devBypass?: boolean };
 }
 
 const NO_CACHE = 'no-cache';
@@ -43,9 +50,11 @@ export function createApp({
   version,
   backendTimeoutMs,
   backendHeaders = noBackendAuth,
+  auth,
 }: FesConfig): Express {
   const app = express();
   app.disable('x-powered-by');
+  if (auth?.devBypass) app.use(devBypassHeader);
   app.use(
     healthRouter({
       version,
@@ -53,14 +62,24 @@ export function createApp({
     }),
   );
 
+  // Backend calls carry the user's lightweight access token when login is on.
+  const headersFor = async (res: Response) => ({ ...(await backendHeaders()), ...userBearer(res) });
+
   const api = express.Router();
   api.use(traceResponse);
+  if (auth) {
+    api.use(auth.gate);
+    // The gate has just asked the backend's /me: its answer is the user.
+    api.get('/me', (_req, res) => {
+      res.set('Cache-Control', 'no-store').set('Vary', 'Cookie').json(res.locals.me);
+    });
+  }
   api.get('/', async (_req, res) =>
-    forward(res, `${backendUrl}/cart`, backendTimeoutMs, await backendHeaders()),
+    forward(res, `${backendUrl}/cart`, backendTimeoutMs, await headersFor(res)),
   );
   api.get('/test-error', async (req, res) => {
     if (req.query.in === 'backend') {
-      await forward(res, `${backendUrl}/test-error`, backendTimeoutMs, await backendHeaders());
+      await forward(res, `${backendUrl}/test-error`, backendTimeoutMs, await headersFor(res));
       return;
     }
     throw new Error('Cart FES test error');
@@ -71,6 +90,8 @@ export function createApp({
 
   // Hashed files never change; entry.js and version.json must be revalidated so a deploy is live
   // at once. The Shell serves the page itself, so there is no HTML here.
+  // The entry needs a valid login and a Cart role; hashed files and version.json stay public.
+  if (auth) app.use('/mfe/cart/entry.js', auth.gate);
   app.use(
     '/mfe/cart',
     express.static(clientDist, {

@@ -88,6 +88,33 @@ Actions signs in with workload identity federation.
 pnpm lint && pnpm typecheck && pnpm test
 ```
 
+## Login (MVP-2)
+
+Off by default: without `AUTH_ENABLED=true`, Cart is MVP-1 unchanged.
+[shop-mfe-platform](https://github.com/arun9483/shop-mfe-platform)'s `docker/compose.sso.yaml` turns it on
+on Docker. The Shell logs users in; Cart only checks
+([MVP-2](https://github.com/arun9483/arun-mfe-platform/blob/main/docs/mvp-2-sso.md)).
+
+| Part                      | What it does                                                                                                                                                                                                                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| FES gate                  | `/mfe/cart/entry.js` and `/api/cart/*` need a valid `shop_at` from the Shell's login client (`LOGIN_CLIENT_ID=shell-fes`) and a Cart role: `401` or `403` otherwise. Hashed files and `version.json` stay public. The FES has no client of its own; it asks the backend's `/me`, reused for 15 s |
+| Backend                   | Checks the token, then the user's session, account and Cart roles at the IdP with its own service access token, reused for 15 s; `GET /me`                                                                                                                                                       |
+| `server-common/src/auth/` | The Shell's copy, unchanged                                                                                                                                                                                                                                                                      |
+| Client                    | Every API call goes through the `401` → refresh → retry wrapper (`client/src/auth.ts`). A user without a Cart role sees the Shell's "no access" message instead of Cart                                                                                                                          |
+
+**Settings.** `mock-backend/.env` holds `OIDC_CLIENT_ID=cart-backend` and `OIDC_CLIENT_SECRET`, this server's
+copy of `CART_BACKEND_SECRET` in `keycloak/.env`: the two must match. Docker adds the rest.
+
+**Standalone without an IdP.** Development only: start the FES and backend with `AUTH_DEV_BYPASS=true`,
+`AUTH_DEV_USER_SUB` and `AUTH_DEV_USER_ROLES` (e.g. `cart-user`), then the stub as usual. Every request acts as
+that user; every response carries `X-Auth-Dev-Bypass: true`; the servers refuse to start with the bypass when
+`NODE_ENV=production` or on Cloud Run (`K_SERVICE`).
+
+```sh
+AUTH_DEV_BYPASS=true AUTH_DEV_USER_ROLES=cart-user pnpm start
+pnpm standalone
+```
+
 ## Identity provider settings
 
 `keycloak/shop-cart.yaml` holds this repository's settings in the shop's identity provider (Keycloak realm `shop`):

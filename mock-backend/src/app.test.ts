@@ -1,3 +1,4 @@
+import type { RequestHandler } from 'express';
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 import { createApp } from './app.js';
@@ -20,6 +21,37 @@ describe('cart mock backend', () => {
   });
 
   it('is ready', async () => {
+    expect((await request(app).get('/health/ready')).status).toBe(200);
+  });
+});
+
+describe('login (MVP-2)', () => {
+  const version = { name: 'mock-backend', version: '0.1.0', commit: 'test', buildTime: 'now' };
+
+  it('answers /me for a logged-in user, and refuses others, but never health', async () => {
+    const user = {
+      sub: 'u1',
+      sid: 's1',
+      user: { sub: 'u1', preferred_username: 'alice', enabled: true },
+      roles: ['r'],
+    };
+    let allow = true;
+    const requireUser: RequestHandler = (_req, res, next) => {
+      if (!allow) {
+        res.status(401).end();
+        return;
+      }
+      res.locals.user = user;
+      next();
+    };
+    const app = createApp(version, requireUser);
+    expect((await request(app).get('/me')).body).toEqual({
+      sub: 'u1',
+      preferred_username: 'alice',
+      roles: ['r'],
+    });
+    allow = false;
+    expect((await request(app).get('/me')).status).toBe(401);
     expect((await request(app).get('/health/ready')).status).toBe(200);
   });
 });

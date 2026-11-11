@@ -1,6 +1,6 @@
 import { Heading, Paragraph } from '@arun-dev/ui';
 import { useEffect, useState } from 'react';
-import { fetchWithTimeout } from '../timeouts';
+import { apiFetch } from '../auth';
 import styles from './Cart.module.css';
 import { NavLink } from './NavLink';
 
@@ -26,7 +26,7 @@ export default function CartPage() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetchWithTimeout('/api/cart', controller.signal)
+    apiFetch('/api/cart', controller.signal)
       .then((res) => (res.ok ? (res.json() as Promise<Cart>) : Promise.reject(new Error())))
       .then((cart) => {
         setState({ status: 'ready', cart });
