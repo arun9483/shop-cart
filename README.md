@@ -115,6 +115,14 @@ AUTH_DEV_BYPASS=true AUTH_DEV_USER_ROLES=cart-user pnpm start
 pnpm standalone
 ```
 
+## Names and prices from Catalog (MVP-2)
+
+With login on and `CATALOG_BACKEND_URL` set (Docker's `compose.sso.yaml` sets it), the backend keeps only each
+item's product ID and quantity and reads names and prices from Catalog's backend (`GET /service/products`),
+with its own service access token and the user's `sub` in `X-Shop-User-Sub`; never the user's token. Catalog
+grants it `catalog-api:read-products`. If Catalog cannot answer, the cart is a `503`. Without it (MVP-1, or
+login off) the backend keeps its own copy of names and prices.
+
 ## Identity provider settings
 
 `keycloak/shop-cart.yaml` holds this repository's settings in the shop's identity provider (Keycloak realm `shop`):
