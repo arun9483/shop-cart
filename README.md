@@ -87,3 +87,10 @@ Actions signs in with workload identity federation.
 ```sh
 pnpm lint && pnpm typecheck && pnpm test
 ```
+
+## Identity provider settings
+
+`keycloak/shop-cart.yaml` holds this repository's settings in the shop's identity provider (Keycloak realm `shop`):
+the `cart-backend` client, Cart's roles, and who holds them. [shop-mfe-platform](https://github.com/arun9483/shop-mfe-platform) applies it on Docker when single
+sign-on runs, together with every other repository's file. Roles are granted through this repository's own groups. Copy `keycloak/.env.example` to `keycloak/.env` and set a random secret. Nothing in this repository reads it yet; see
+[MVP-2](https://github.com/arun9483/arun-mfe-platform/blob/main/docs/mvp-2-sso.md).

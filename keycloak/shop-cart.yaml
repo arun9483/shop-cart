@@ -1,0 +1,41 @@
+# Cart's settings in the shop's identity provider (Keycloak realm `shop`), applied by
+# shop-mfe-platform's settings importer (keycloak-config-cli). Secrets come from keycloak/.env.
+# Cart grants its own roles, so this file lists everyone who may use Cart.
+realm: shop
+
+clients:
+  - clientId: cart-backend
+    protocol: openid-connect
+    publicClient: false
+    secret: $(env:CART_BACKEND_SECRET)
+    standardFlowEnabled: false
+    directAccessGrantsEnabled: false
+    serviceAccountsEnabled: true
+    # Keycloak 26.8's admin API takes only tokens with this scope. Optional: the backend asks for it only
+    # for admin API calls, so tokens it sends to other backends never carry admin API rights.
+    optionalClientScopes: [kc-admin-api]
+
+roles:
+  client:
+    cart-backend:
+      - name: cart-user
+        description: May use the cart
+
+# Roles are granted through Cart's own groups: several repositories' files name the same users and
+# service accounts, and only group memberships merge across files.
+groups:
+  - name: cart
+    subGroups:
+      - name: user
+        clientRoles:
+          cart-backend: [cart-user]
+
+users:
+  # Lets the backend read users by sub.
+  - username: service-account-cart-backend
+    clientRoles:
+      realm-management: [view-users]
+  - username: alice
+    groups: [/cart/user]
+  - username: bob
+    groups: [/cart/user]
