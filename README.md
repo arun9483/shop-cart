@@ -105,6 +105,9 @@ on Docker. The Shell logs users in; Cart only checks
 **Settings.** `mock-backend/.env` holds `OIDC_CLIENT_ID=cart-backend` and `OIDC_CLIENT_SECRET`, this server's
 copy of `CART_BACKEND_SECRET` in `keycloak/.env`: the two must match. Docker adds the rest.
 
+**Only the adapter knows Keycloak.** ESLint refuses Keycloak's endpoints and claim names anywhere but
+`server-common/src/auth/idp/keycloak.ts`, as in every repository (ADR 0004).
+
 **Standalone without an IdP.** Development only: start the FES and backend with `AUTH_DEV_BYPASS=true`,
 `AUTH_DEV_USER_SUB` and `AUTH_DEV_USER_ROLES` (e.g. `cart-user`), then the stub as usual. Every request acts as
 that user; every response carries `X-Auth-Dev-Bypass: true`; the servers refuse to start with the bypass when
