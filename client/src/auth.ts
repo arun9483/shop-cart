@@ -28,8 +28,10 @@ function underRefreshLock<T>(work: () => Promise<T>): Promise<T> {
 /**
  * An API call with login handled. A `401` means the lightweight access token has expired: under the
  * shared lock, retry first (another tab may have refreshed, and cookies are shared by every tab), then
- * refresh once and retry. If the user still is not logged in, go to login. With login off (MVP-1)
- * no call is ever a `401`, so this is a plain call.
+ * refresh once and retry. If the user still is not logged in, go to login. If login cannot be checked
+ * right now (refresh answers `503`, e.g. the IdP is down), return that answer, so the page says it
+ * could not load, instead of sending the user to an IdP that is down. With login off (MVP-1) no call
+ * is ever a `401`, so this is a plain call.
  */
 export async function apiFetch(url: string, signal?: AbortSignal): Promise<Response> {
   const first = await fetchWithTimeout(url, signal);
@@ -38,7 +40,8 @@ export async function apiFetch(url: string, signal?: AbortSignal): Promise<Respo
     const retry = await fetchWithTimeout(url, signal);
     if (retry.status !== 401) return retry;
     const refreshed = await fetch('/auth/refresh', { method: 'POST' });
-    return refreshed.ok ? fetchWithTimeout(url, signal) : retry;
+    if (refreshed.ok) return fetchWithTimeout(url, signal);
+    return refreshed.status === 401 ? retry : refreshed;
   });
   if (res.status === 401) goToLogin();
   return res;
