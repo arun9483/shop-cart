@@ -1,6 +1,6 @@
 import express, { type Express, type RequestHandler, type Response } from 'express';
+import { devBypassHeader, userBearer } from '@arun-dev/server/auth';
 import {
-  devBypassHeader,
   forward,
   noBackendAuth,
   type BackendHeaders,
@@ -8,9 +8,8 @@ import {
   notFound,
   problemHandler,
   traceResponse,
-  userBearer,
   type VersionInfo,
-} from '@shop-cart/server-common';
+} from '@arun-dev/server/http';
 
 export interface FesConfig {
   /** The Cart backend service, e.g. the mock backend in development. */

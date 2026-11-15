@@ -1,13 +1,12 @@
 import {
-  closeOnSignal,
   connectIdp,
   devBypassFromEnv,
   devRequireUser,
   oidcSettingsFromEnv,
-  readVersion,
   requireUser,
   serviceCaller,
-} from '@shop-cart/server-common';
+} from '@arun-dev/server/auth';
+import { closeOnSignal, readVersion } from '@arun-dev/server/http';
 import { createApp, type CatalogSource } from './app.js';
 
 const port = Number(process.env.PORT ?? 4003);
@@ -16,7 +15,9 @@ const port = Number(process.env.PORT ?? 4003);
 const dev = devBypassFromEnv();
 const settings = dev ? undefined : oidcSettingsFromEnv();
 const idp = settings && connectIdp(settings);
-const loggedIn = dev ? devRequireUser(dev) : idp && requireUser({ ...idp, unit: 'cart' });
+const loggedIn = dev
+  ? devRequireUser(dev)
+  : idp && requireUser({ ...idp, audience: 'cart-backend' });
 // Names and prices from Catalog's backend (ADR 0005): only with login on and CATALOG_BACKEND_URL set.
 const catalogUrl = process.env.CATALOG_BACKEND_URL;
 const catalog: CatalogSource | undefined =

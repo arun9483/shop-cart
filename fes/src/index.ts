@@ -1,15 +1,12 @@
 import { resolve } from 'node:path';
 import {
-  backendAuth,
-  closeOnSignal,
   connectIdp,
   devBypassFromEnv,
   devFesGate,
   fesGate,
   oidcSettingsFromEnv,
-  readVersion,
-  requiredEnv,
-} from '@shop-cart/server-common';
+} from '@arun-dev/server/auth';
+import { backendAuth, closeOnSignal, readVersion, requiredEnv } from '@arun-dev/server/http';
 import { createApp, type FesConfig } from './app.js';
 
 const port = Number(process.env.PORT ?? 3003);
