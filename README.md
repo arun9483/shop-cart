@@ -6,12 +6,11 @@ The Cart micro frontend of the shop platform: the cart page. The
 ([vision](https://github.com/arun9483/arun-mfe-platform/blob/main/docs/vision.md),
 [MVP](https://github.com/arun9483/arun-mfe-platform/blob/main/docs/mvp.md)).
 
-| Folder           | What                                                                  | Port   |
-| ---------------- | --------------------------------------------------------------------- | ------ |
-| `client/`        | React + single-spa-react MFE, built with Vite, served at `/mfe/cart/` | —      |
-| `fes/`           | Express FES: serves the client, `/api/cart/*`, health and version     | `3003` |
-| `mock-backend/`  | Stand-in for the Cart backend service                                 | `4003` |
-| `server-common/` | Trace context, problem+json, health and version for the servers       | —      |
+| Folder          | What                                                                  | Port   |
+| --------------- | --------------------------------------------------------------------- | ------ |
+| `client/`       | React + single-spa-react MFE, built with Vite, served at `/mfe/cart/` | —      |
+| `fes/`          | Express FES: serves the client, `/api/cart/*`, health and version     | `3003` |
+| `mock-backend/` | Stand-in for the Cart backend service                                 | `4003` |
 
 ## How it loads
 
@@ -95,18 +94,18 @@ Off by default: without `AUTH_ENABLED=true`, Cart is MVP-1 unchanged.
 on Docker. The Shell logs users in; Cart only checks
 ([MVP-2](https://github.com/arun9483/arun-mfe-platform/blob/main/docs/mvp-2-sso.md)).
 
-| Part                      | What it does                                                                                                                                                                                                                                                                                     |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| FES gate                  | `/mfe/cart/entry.js` and `/api/cart/*` need a valid `shop_at` from the Shell's login client (`LOGIN_CLIENT_ID=shell-fes`) and a Cart role: `401` or `403` otherwise. Hashed files and `version.json` stay public. The FES has no client of its own; it asks the backend's `/me`, reused for 15 s |
-| Backend                   | Checks the token, then the user's session, account and Cart roles at the IdP with its own service access token, reused for 15 s; `GET /me`                                                                                                                                                       |
-| `server-common/src/auth/` | The Shell's copy, unchanged                                                                                                                                                                                                                                                                      |
-| Client                    | Every API call goes through the `401` → refresh → retry wrapper (`client/src/auth.ts`). A user without a Cart role sees the Shell's "no access" message instead of Cart                                                                                                                          |
+| Part        | What it does                                                                                                                                                                                                                                                                                     |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| FES gate    | `/mfe/cart/entry.js` and `/api/cart/*` need a valid `shop_at` from the Shell's login client (`LOGIN_CLIENT_ID=shell-fes`) and a Cart role: `401` or `403` otherwise. Hashed files and `version.json` stay public. The FES has no client of its own; it asks the backend's `/me`, reused for 15 s |
+| Backend     | Checks the token, then the user's session, account and Cart roles at the IdP with its own service access token, reused for 15 s; `GET /me`                                                                                                                                                       |
+| Shared code | `@arun-dev/server` (`/http`, `/auth`) and `@arun-dev/client`, from [arun-web-foundation](https://github.com/arun9483/arun-web-foundation)                                                                                                                                                        |
+| Client      | Every API call goes through the `401` → refresh → retry wrapper (`apiFetch` from `@arun-dev/client`, in `client/src/auth.ts`). A user without a Cart role sees the Shell's "no access" message instead of Cart                                                                                   |
 
 **Settings.** `mock-backend/.env` holds `OIDC_CLIENT_ID=cart-backend` and `OIDC_CLIENT_SECRET`, this server's
 copy of `CART_BACKEND_SECRET` in `keycloak/.env`: the two must match. Docker adds the rest.
 
-**Only the adapter knows Keycloak.** ESLint refuses Keycloak's endpoints and claim names anywhere but
-`server-common/src/auth/idp/keycloak.ts`, as in every repository (ADR 0004).
+**Only the adapter knows Keycloak.** ESLint refuses Keycloak's endpoints and claim names in this repository:
+only `@arun-dev/server/auth/keycloak` knows Keycloak (ADR 0004).
 
 **Standalone without an IdP.** Development only: start the FES and backend with `AUTH_DEV_BYPASS=true`,
 `AUTH_DEV_USER_SUB` and `AUTH_DEV_USER_ROLES` (e.g. `cart-user`), then the stub as usual. Every request acts as

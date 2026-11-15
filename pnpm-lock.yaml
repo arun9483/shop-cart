@@ -56,6 +56,9 @@ importers:
 
   client:
     dependencies:
+      '@arun-dev/client':
+        specifier: 0.1.0
+        version: 0.1.0
       '@arun-dev/headless':
         specifier: 4.28.1
         version: 4.28.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -72,12 +75,12 @@ importers:
         specifier: 6.0.2
         version: 6.0.2(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react@19.3.1)
     devDependencies:
+      '@arun-dev/server':
+        specifier: 0.1.0
+        version: 0.1.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)
       '@newrelic/publish-sourcemap':
         specifier: 5.1.4
         version: 5.1.4
-      '@shop-cart/server-common':
-        specifier: workspace:*
-        version: link:../server-common
       '@testing-library/dom':
         specifier: 10.4.2
         version: 10.4.2
@@ -105,15 +108,21 @@ importers:
 
   fes:
     dependencies:
-      '@shop-cart/server-common':
-        specifier: workspace:*
-        version: link:../server-common
+      '@arun-dev/server':
+        specifier: 0.1.0
+        version: 0.1.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)
       express:
         specifier: 5.3.0
         version: 5.3.0
+      jose:
+        specifier: 6.2.17
+        version: 6.2.17
       newrelic:
         specifier: 14.8.0
         version: 14.8.0
+      openid-client:
+        specifier: 6.8.9
+        version: 6.8.9
     devDependencies:
       '@types/express':
         specifier: 5.0.6
@@ -133,15 +142,21 @@ importers:
 
   mock-backend:
     dependencies:
-      '@shop-cart/server-common':
-        specifier: workspace:*
-        version: link:../server-common
+      '@arun-dev/server':
+        specifier: 0.1.0
+        version: 0.1.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)
       express:
         specifier: 5.3.0
         version: 5.3.0
+      jose:
+        specifier: 6.2.17
+        version: 6.2.17
       newrelic:
         specifier: 14.8.0
         version: 14.8.0
+      openid-client:
+        specifier: 6.8.9
+        version: 6.8.9
     devDependencies:
       '@types/express':
         specifier: 5.0.6
@@ -159,40 +174,6 @@ importers:
         specifier: 4.23.15
         version: 4.23.15
 
-  server-common:
-    dependencies:
-      express:
-        specifier: 5.3.0
-        version: 5.3.0
-      jose:
-        specifier: 6.2.17
-        version: 6.2.17
-      newrelic:
-        specifier: 14.8.0
-        version: 14.8.0
-      openid-client:
-        specifier: 6.8.9
-        version: 6.8.9
-      statuses:
-        specifier: 2.0.2
-        version: 2.0.2
-    devDependencies:
-      '@types/express':
-        specifier: 5.0.6
-        version: 5.0.6
-      '@types/newrelic':
-        specifier: 9.14.8
-        version: 9.14.8
-      '@types/statuses':
-        specifier: 2.0.6
-        version: 2.0.6
-      '@types/supertest':
-        specifier: 7.2.1
-        version: 7.2.1
-      supertest:
-        specifier: 7.3.1
-        version: 7.3.1
-
 packages:
 
   '@apm-js-collab/code-transformer@0.18.1':
@@ -202,6 +183,9 @@ packages:
   '@apm-js-collab/tracing-hooks@0.13.3':
     resolution: {integrity: sha512-l/ScKzA7sg1hZKc3QMtbnA3blVkTteN3Yq97AejfFrEiR0S0lay3KmyJJ44p45EEVIGP85fLfki4a6OD/7Jb8w==}
 
+  '@arun-dev/client@0.1.0':
+    resolution: {integrity: sha512-fw5xtUh8USSSZwyeswDhQXtFv1bPDs/2FyJbK5X+rcGTtdW+/Wji+y4BPE0l9qn9hzovviCYp+9qGongxPulZg==}
+
   '@arun-dev/headless@4.28.1':
     resolution: {integrity: sha512-inCkXbmQoKv/Y46sQDhKezFdqct0xaBt/3xnJn1+5XS9+JUjU7T8KMUI3W2NSA1e42uoPVzT5TEGSXWfmGLXow==}
     peerDependencies:
@@ -210,6 +194,19 @@ packages:
       react-dom: '>=19.0.0'
     peerDependenciesMeta:
       '@types/react':
+        optional: true
+
+  '@arun-dev/server@0.1.0':
+    resolution: {integrity: sha512-0sGtPBIXndwoo39T7fZzCFDF6QzGQxICbtA64mVrCxzgFwGXWQYZ00rckfW9obfXfdDnyAOUcEEPMbVleAn3Lw==}
+    engines: {node: '>=24.22.1'}
+    hasBin: true
+    peerDependencies:
+      express: ^5.0.0
+      jose: ^6.0.0
+      newrelic: ^14.0.0
+      openid-client: ^6.0.0
+    peerDependenciesMeta:
+      newrelic:
         optional: true
 
   '@arun-dev/tokens@1.0.0':
@@ -941,9 +938,6 @@ packages:
 
   '@types/serve-static@2.2.0':
     resolution: {integrity: sha512-8mam4H1NHLtu7nmtalF7eyBH14QyOASmcxHhSfEoRyr0nP/YdoesEtU+uSRvMe96TW/HPTtkoKqQLl53N7UXMQ==}
-
-  '@types/statuses@2.0.6':
-    resolution: {integrity: sha512-xMAgYwceFhRA2zY+XbEA7mxYbA093wdiW8Vu6gZPGWy9cmOyU9XesH1tNcEWsKFd5Vzrqx5T3D38PWx1FIIXkA==}
 
   '@types/superagent@8.1.11':
     resolution: {integrity: sha512-KA7srSW/HENDtOw9DOqaFLgWuMqN9WgjEw62lh9dpvRaZDkhdOkazASd7X7i2eMUYLHa1U37ZttnePsH5zTDHw==}
@@ -2535,12 +2529,23 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@arun-dev/client@0.1.0': {}
+
   '@arun-dev/headless@4.28.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
     optionalDependencies:
       '@types/react': 19.3.0
+
+  '@arun-dev/server@0.1.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)':
+    dependencies:
+      express: 5.3.0
+      jose: 6.2.17
+      openid-client: 6.8.9
+      statuses: 2.0.2
+    optionalDependencies:
+      newrelic: 14.8.0
 
   '@arun-dev/tokens@1.0.0': {}
 
@@ -3196,8 +3201,6 @@ snapshots:
     dependencies:
       '@types/http-errors': 2.0.5
       '@types/node': 24.19.2
-
-  '@types/statuses@2.0.6': {}
 
   '@types/superagent@8.1.11':
     dependencies:

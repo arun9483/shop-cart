@@ -1,16 +1,18 @@
 import express, { type Express, type RequestHandler } from 'express';
 import {
   devBypassHeader,
+  meHandler,
+  USER_SUB_HEADER,
+  type LoggedInUser,
+} from '@arun-dev/server/auth';
+import {
   HttpError,
   healthRouter,
-  meHandler,
   notFound,
   problemHandler,
   traceResponse,
-  USER_SUB_HEADER,
-  type LoggedInUser,
   type VersionInfo,
-} from '@shop-cart/server-common';
+} from '@arun-dev/server/http';
 
 const items = [
   { productId: 'mug', name: 'Stoneware mug', price: 349, quantity: 2 },
