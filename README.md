@@ -40,7 +40,9 @@ Then run the Shell and open http://localhost:3000/cart. `shop-router` sends `/mf
 `/api/cart/*` here.
 
 Cart errors are reported by the Shell's browser agent, so `NEW_RELIC_BROWSER_APP_ID` in `client/.env`
-is the Shell's browser application ID; the source maps are uploaded there.
+is the Shell's browser application ID; the source maps are uploaded there. The build keeps them in
+`client/sourcemaps/`, never in `dist` or an image; `deploy/upload-sourcemaps.sh` uploads them for one tenant
+(its `PUBLIC_ORIGIN` and keys), and `deploy/build.sh` runs it when `PUBLIC_ORIGIN` is set.
 
 ## Standalone
 
@@ -70,7 +72,7 @@ Refresh work on the stub's port. The API still goes to the FES. If port 3103 is 
 
 ## Deploy
 
-`.github/workflows/deploy-staging.yml` deploys Cart to staging on Cloud Run: on every push to `main`
+`.github/workflows/deploy-staging.yml` (paused during MVP-3 phase 2) deploys Cart to staging on Cloud Run: on every push to `main`
 after lint, typecheck and tests pass, or by hand from any branch (**Actions → Deploy to staging → Run
 workflow**). It builds the client for staging (uploading its source maps), builds one image for the mock
 backend and one for the FES (`deploy/Dockerfile`), deploys the backend as a private service that only

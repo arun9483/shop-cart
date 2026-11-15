@@ -6,6 +6,7 @@ import {
   requireUser,
   serviceCaller,
 } from '@arun-dev/server/auth';
+import { keycloakAdapter } from '@arun-dev/server/auth/keycloak';
 import { closeOnSignal, readVersion } from '@arun-dev/server/http';
 import { createApp, type CatalogSource } from './app.js';
 
@@ -14,10 +15,11 @@ const port = Number(process.env.PORT ?? 4003);
 // Login (MVP-2) is off unless AUTH_ENABLED=true; standalone, the development bypass acts as a fixed user.
 const dev = devBypassFromEnv();
 const settings = dev ? undefined : oidcSettingsFromEnv();
-const idp = settings && connectIdp(settings);
+const idp = settings && connectIdp(settings, { keycloak: keycloakAdapter });
 const loggedIn = dev
   ? devRequireUser(dev)
-  : idp && requireUser({ ...idp, audience: 'cart-backend' });
+  : // This backend's client at the IdP: its name in a token's aud, and the client its roles are on.
+    idp && requireUser({ ...idp, audience: process.env.OIDC_AUDIENCE ?? 'cart-backend' });
 // Names and prices from Catalog's backend (ADR 0005): only with login on and CATALOG_BACKEND_URL set.
 const catalogUrl = process.env.CATALOG_BACKEND_URL;
 const catalog: CatalogSource | undefined =
