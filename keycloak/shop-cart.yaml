@@ -1,7 +1,7 @@
-# Cart's settings in the shop's identity provider (Keycloak realm `shop`), applied by
+# Cart's settings in the tenant's identity provider (Keycloak realm OIDC_REALM, default shop), applied by
 # shop-mfe-platform's settings importer (keycloak-config-cli). Secrets come from keycloak/.env.
 # Cart grants its own roles, so this file lists everyone who may use Cart.
-realm: shop
+realm: $(env:OIDC_REALM)
 
 clients:
   - clientId: cart-backend

@@ -76,8 +76,8 @@ importers:
         version: 6.0.2(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react@19.3.1)
     devDependencies:
       '@arun-dev/server':
-        specifier: 0.1.0
-        version: 0.1.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)
+        specifier: 0.2.0
+        version: 0.2.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)
       '@newrelic/publish-sourcemap':
         specifier: 5.1.4
         version: 5.1.4
@@ -109,8 +109,8 @@ importers:
   fes:
     dependencies:
       '@arun-dev/server':
-        specifier: 0.1.0
-        version: 0.1.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)
+        specifier: 0.2.0
+        version: 0.2.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)
       express:
         specifier: 5.3.0
         version: 5.3.0
@@ -143,8 +143,8 @@ importers:
   mock-backend:
     dependencies:
       '@arun-dev/server':
-        specifier: 0.1.0
-        version: 0.1.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)
+        specifier: 0.2.0
+        version: 0.2.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)
       express:
         specifier: 5.3.0
         version: 5.3.0
@@ -196,8 +196,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@arun-dev/server@0.1.0':
-    resolution: {integrity: sha512-0sGtPBIXndwoo39T7fZzCFDF6QzGQxICbtA64mVrCxzgFwGXWQYZ00rckfW9obfXfdDnyAOUcEEPMbVleAn3Lw==}
+  '@arun-dev/server@0.2.0':
+    resolution: {integrity: sha512-jR8bTEi5XIBvRCtMKMipsoeERlk8YvyXTPNutNad2zVIBuSnyowyPbnCulu0EiPLFO+FnwUVmC7REdLcGSSCgA==}
     engines: {node: '>=24.22.1'}
     hasBin: true
     peerDependencies:
@@ -2538,7 +2538,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.0
 
-  '@arun-dev/server@0.1.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)':
+  '@arun-dev/server@0.2.0(express@5.3.0)(jose@6.2.17)(newrelic@14.8.0)(openid-client@6.8.9)':
     dependencies:
       express: 5.3.0
       jose: 6.2.17

@@ -6,6 +6,7 @@ import {
   fesGate,
   oidcSettingsFromEnv,
 } from '@arun-dev/server/auth';
+import { keycloakAdapter } from '@arun-dev/server/auth/keycloak';
 import { backendAuth, closeOnSignal, readVersion, requiredEnv } from '@arun-dev/server/http';
 import { createApp, type FesConfig } from './app.js';
 
@@ -23,10 +24,11 @@ function login(): FesConfig['auth'] {
   const settings = oidcSettingsFromEnv(process.env, { withClient: false });
   if (!settings) return undefined;
   const gate = fesGate({
-    ...connectIdp(settings),
+    ...connectIdp(settings, { keycloak: keycloakAdapter }),
     loginClientId: requiredEnv('LOGIN_CLIENT_ID'),
     backendUrl,
-    backendAudience: 'cart-backend',
+    // The backend's client at the IdP: its name in a token's aud.
+    backendAudience: process.env.BACKEND_AUDIENCE ?? 'cart-backend',
     backendTimeoutMs,
   });
   return { gate: gate.api };
